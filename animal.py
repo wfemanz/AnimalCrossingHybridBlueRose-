@@ -14,22 +14,30 @@ table={'2020':'Black','2010':'Black','2000':'Black','2100':'Black','2200':'Blue'
         , '1122': 'Yellow', '1221': 'Yellow', '1222': 'Yellow', '1211': 'Yellow', '1212': 'Yellow', '2122': 'Yellow', '2222': 'Yellow', '2212': 'Yellow', '0220': 'Yellow'}
 def main():
 
- a =0
- b =1
-
- name=table['2110']
  pl=list(table.keys())[list(table.values()).index('Pink')]
  pl=[k for k,v in table.items() if v=='Pink']
- result=hybrid('1210','1210')
+ result=hybrid('0100','0120')
 
  resultall1=bubble_sort(result)
- #printlist(resultall1)
- input=[['2021','0010','0220'],[table['2021'],table['0010'],table['0220']],['','',''],[1,1,1],[1,1,1],[1,1,1],['2021','0010','0220'],[1,1,1]]
+ printlist(resultall1)
+
+ input = [['2021', '0010', '0220'], [],[], [], [],[]]
+
+ for i in range(len(input[0])):
+
+     input[1].append(table[input[0][i]])
+     input[2].append('')
+     input[3].append( 1)
+     input[4].append( 1)
+     input[5].append( 1)
+
+
  blue=[[],[],[],[],[],[],[]]
 
  start = time.clock()
-
- blueres=hybirdallnew2(input,10,blue)
+ target=['2200']
+# target = ['0100']
+ blueres=hybirdallnew2(input,6,blue,target,2,1,1.5,2)
 
  end = time.clock()
  print (end - start)
@@ -42,18 +50,9 @@ def main():
 
  #print(name)
 hashset=set()
-def hybirdallnew2(input,level,bluelist):
+def hybirdallnew2(input,level,bluelist,target,MaxSelf,Para1,Para2,Para3):
     if(level==0 ):
-
         return
-    if('Blue' in bluelist[1]):
-        sum=0
-        for i in range(len(bluelist[1])):
-            if bluelist[1][i]=='Blue' and bluelist[4][i]<=16:
-                sum=sum+1
-                idx=i
-             #   print('totalP',bluelist[3][idx]/16384,'currentP',bluelist[4][idx],'selfcolor',bluelist[5][idx],'Blue',6-1-level,bluelist[2][idx])
-       # print(sum)
     level=level-1
     currall=[[],[],[],[],[],[],[],[]]
     for i in range(len(input[1])):
@@ -74,10 +73,7 @@ def hybirdallnew2(input,level,bluelist):
                 currall[2].append(currall1[2][k])#得到概率
                 currall[3].append(currall1[3][k])#本颜色概率
                 if input[0][i] == input[0][j]:
-                    currall[4].append(
-                        'Level**' + str(6 - 1 - level) + currall1[1][k] + currall1[0][k] + 'selfprob1/' + str(
-                            currall1[3][k]) + 'from' + input[1][i] + input[0][i] + '+' + input[1][j] + input[0][
-                            j] + 'tatalprob1/' + str(currall1[2][k]) + '||||(' + input[2][i] + ')||||')
+                    currall[4].append('Level**' + str(6 - 1 - level) + currall1[1][k] + currall1[0][k] + 'selfprob1/' + str( currall1[3][k]) + 'from' + input[1][i] + input[0][i] + '+' + input[1][j] + input[0][ j] + 'tatalprob1/' + str(currall1[2][k]) + '||||(' + input[2][i] + ')||||')
                     currall[5].append(currall1[2][k] * input[3][i] )
                     currall[6].append(currall1[3][k] * input[5][i] )
                 else:
@@ -87,14 +83,14 @@ def hybirdallnew2(input,level,bluelist):
 
 
     for i in range(len(currall[0])):
-        if ((currall[0][i] not in input[0]) and currall[3][i]<2)and table[currall[0][i]]!='Blue' :
+        if ((currall[0][i] not in input[0]) and currall[3][i]<MaxSelf)and table[currall[0][i]]!='Blue' :
             input[0].append(currall[0][i])#number
-            input[1].append(table[currall[0][i]])#color
+            input[1].append(currall[1][i])#color
             input[2].append(currall[4][i])#path
             input[3].append(currall[5][i])#totalP
             input[4].append(currall[2][i])#curP
             input[5].append(currall[6][i])#totalselfcolorP
-        if (currall[0][i] in input[0])and(currall[3][i] < 2) and table[currall[0][i]] != 'Blue':
+        if (currall[0][i] in input[0])and(currall[3][i] < MaxSelf) and table[currall[0][i]] != 'Blue':
            for ll in range(len(input[0])):
                 if input[0][ll] == currall[0][i]:
 
@@ -106,15 +102,15 @@ def hybirdallnew2(input,level,bluelist):
                         input[3][ll]=(currall[5][i])
                         input[4][ll] = (currall[2][i])
                         input[5][ll] = (currall[6][i])
-        if  (table[currall[0][i]]=='Blue' and currall[4][i]not in bluelist[2]):
+        if  (currall[0][i]in target and currall[4][i]not in bluelist[2]):
             bluelist[0].append(currall[0][i])
             bluelist[1].append(table[currall[0][i]])
             bluelist[2].append(currall[4][i])
             bluelist[3].append(currall[5][i])
             bluelist[4].append(currall[2][i])
             bluelist[5].append(currall[6][i])
-            bluelist[6].append(math.log(currall[5][i]/currall[2][i])*currall[2][i]*currall[6][i])
-    hybirdallnew2(input,level,bluelist)
+            bluelist[6].append(((math.log(currall[5][i]/currall[2][i]))**Para1)*(currall[2][i]**Para2)*(currall[6][i]**Para3))
+    hybirdallnew2(input,level,bluelist,target,MaxSelf,Para1,Para2,Para3)
     return bluelist
 
 def printlist(result):
